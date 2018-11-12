@@ -1,0 +1,151 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[german]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{tikz}
+\usetikzlibrary{decorations.pathreplacing}
+\usepackage[left=0mm,right=15mm,top=15mm,bottom=5mm]{geometry}
+\usepackage{../ting}
+
+\begin{document}
+
+\scalebox{.54}{
+\begin{tikzpicture}
+	\input{Mustertetris_BSc_CiS_Physik.inc}
+	\draw
+		[line width=1pt,decorate,decoration={brace,amplitude=10pt,raise=10pt},yshift=0pt]
+		(bsc_cis_physik.north east) -- (bsc_cis_physik.south east)
+		node [black,midway,xshift=30mm] {\shortstack{B. Sc.\\Computing in Science\\(SP Physik)}}
+	;
+	%
+	\input{Mustertetris_MSc_Informatik.inc}	
+	\draw
+		[line width=1pt,decorate,decoration={brace,amplitude=10pt,raise=10pt},yshift=0pt]
+		(msc_informatik.north east) -- (msc_informatik.south east)
+		node [black,midway,xshift=20mm] {\shortstack{M. Sc.\\Informatik}}
+	;
+	%
+	\input{Mustertetris_MSc_Physik.inc}	
+	\draw
+		[line width=1pt,decorate,decoration={brace,amplitude=10pt,raise=10pt},yshift=0pt]
+		(msc_physik.north east) -- (msc_physik.south east)
+		node [black,midway,xshift=20mm] {\shortstack{M. Sc.\\Physik}}
+	;
+	%
+	\legend{tetris_blue}{Informatik}
+	\legend{tetris_red}{Physik}
+	\legend{tetris_gray}{Mathematik}
+	\legend{tetris_yellow}{Naturwissenschaftliche Informatik}
+\end{tikzpicture}
+}
+
+\newpage
+
+\scalebox{.54}{
+\begin{tikzpicture}
+	\begin{tetris}[bsc_cis_physik]
+		\drawsemester{1. Semester\\(WiSe 14/15)}
+			\drawmodule{6}{tetris_blue}{transparent}{black}{Softwareentwicklung I}
+			\drawmodule{12}{tetris_red}{transparent}{black}{Physik I}
+			\drawmoduleincomplete{9}{tetris_gray}{transparent}{black}{Mathematik I für Physiker}
+			\drawmodule{3}{tetris_yellow}{transparent}{black}{CiS-\\{}Proseminar}
+			\drawmodule{8}{tetris_red}{transparent}{black}{Physikalisches Praktikum I}
+		\drawsemester{2. Semester\\(SoSe 15)}
+			\drawmodule{6}{tetris_blue}{transparent}{black}{Softwareentwicklung II}
+			\drawmodule{12}{tetris_red}{transparent}{black}{Physik II}
+			\drawmoduleincomplete{9}{tetris_gray}{transparent}{black}{Mathematik II für Physiker}
+			\drawmodule{9}{tetris_blue}{transparent}{black}{Formale Grundlagen\\{}der Informatik I}
+		\drawsemester{3. Semester\\(WiSe 15/16)}
+			\drawmoduleincomplete{9}{tetris_gray}{transparent}{black}{Numerische Mathematik}
+			\drawmodule{9}{tetris_blue}{transparent}{black}{[Wahlpflicht 1]\\{}Formale Grundlagen\\{}der Informatik II}
+			\drawmodule{9}{tetris_gray}{transparent}{black}{Mathematik I für Physiker}
+			\drawmodule{6}{tetris_blue}{transparent}{black}{Algorithmen und\\{}Datenstrukturen}
+			\drawmodule{6}{tetris_blue}{transparent}{black}{Grundlagen von\\{}Datenbanken}
+		\drawsemester{4. Semester\\(SoSe 16)}
+			\drawmodule{9}{tetris_blue}{transparent}{black}{Programmierung für\\{}Naturwissenschaften}
+			\drawmoduleincomplete{9}{tetris_red}{transparent}{black}{Theoretische Physik II}
+			\drawmodule{9}{tetris_gray}{transparent}{black}{Mathematik II für Physiker}
+			\drawmodule{6}{tetris_gray}{transparent}{black}{Stochastik}
+		\drawsemester{5. Semester\\(WiSe 16/17)}
+			\drawmodule{9}{tetris_blue}{transparent}{black}{[Wahlpflicht 2]\\{}Hochleistungsrechnen}
+			\drawmodule{6}{tetris_yellow}{transparent}{black}{Computational\\{}Physics}
+			\drawmodule{6}{tetris_yellow}{transparent}{black}{Projekt\\{}CiS Physik}
+			\drawmoduleincomplete{9}{tetris_gray}{transparent}{black}{Numerische Mathematik}
+			\drawmodule{7}{tetris_red}{transparent}{black}{[Wahlpflicht 3]\\{}Physik V}
+		\drawsemester{6. Semester\\(SoSe 17)}
+			\drawmodule{3}{tetris_yellow}{transparent}{black}{CiS-\\{}Seminar}
+			\drawmodule{12}{tetris_yellow}{transparent}{black}{Abschlussmodul\\(Bachelorarbeit)}
+			\drawmodule{9}{tetris_red}{transparent}{black}{Theoretische Physik II}
+			\drawmoduleincomplete{7}{tetris_red}{transparent}{black}{[Zusätzliche Leistung]\\{}Physik VI}
+		\drawsemester{7. Semester\\(WiSe 17/18)}
+			\drawmodule{9}{tetris_gray}{transparent}{black}{Numerische Mathematik}
+			\drawmoduleincomplete{9}{tetris_gray}{transparent}{black}{[Zusätzliche Leistung]\\{}Mathematik III für Physiker}
+			\drawmoduleincomplete{9}{tetris_red}{transparent}{black}{[Zusätzliche Leistung]\\{}Theoretische Physik III}
+			\drawmodule{9}{tetris_red}{transparent}{black}{[Wahlpflicht 2]\\{}Kleines Physikalisches Praktikum\\{}für Fortgeschrittene}
+	\end{tetris}
+	\draw
+		[line width=1pt,decorate,decoration={brace,amplitude=10pt,raise=10pt},yshift=0pt]
+		(bsc_cis_physik.north east) -- (bsc_cis_physik.south east)
+		node [black,midway,xshift=30mm] {\shortstack{B. Sc.\\Computing in Science\\(SP Physik)}}
+	;
+	%
+	\begin{tetris}[msc_informatik]
+		\drawsemester{1. Semester\\(SoSe 18)}
+			\drawmoduleincomplete{9}{tetris_blue}{transparent}{black}{[Wahlpflicht Theorie]\\{}Machine Learning}
+			\drawmodule{6}{tetris_blue}{transparent}{black}{[Vertiefung]\\{}Hochleistungs-\\{}Ein/-Ausgabe}
+			\drawmoduleincomplete{6}{tetris_blue}{transparent}{black}{[Vertiefung]\\{}Robot Technology}
+			\drawmoduleincomplete{6}{tetris_blue}{transparent}{black}{[Vertiefung]\\{}Neural Networks}
+			\drawmodule{4}{tetris_green}{transparent}{black}{[Wahlbereich]\\{}Italienisch A1}
+		\drawsemester{2. Semester\\(WiSe 18/19)}
+			\drawmodule{12}{tetris_blue}{transparent}{black}{[Projekt]\\{}Parallelrechnerevaluation}		
+			\drawintegrated{1}{1}{3}{Seminar}
+			\drawmodule{9}{tetris_red}{transparent}{black}{[Wahlbereich]\\{}Theoretische Physik III}
+			\drawmodule{8}{tetris_gray}{transparent}{black}{[Wahlbereich]\\{}Mathematik III für Physiker}
+			\drawmodule{3}{tetris_green}{transparent}{black}{[Wahlb.]\\{}Mentoring}
+		\drawsemester{3. Semester\\(SoSe 19)}
+			\drawmodule{6}{tetris_blue}{transparent}{black}{[Vertiefung]\\{}Neural Networks}
+			\drawmodule{6}{tetris_blue}{transparent}{black}{Vertiefung\\Informatik}
+			\drawmodule{9}{tetris_blue}{transparent}{black}{[Wahlpflicht Theorie]\\{}Machine Learning}
+			\drawmodule{9}{tetris_blue}{transparent}{black}{Wahlpflicht}
+%			\drawmodule{9}{white}{black}{black}{Freier\\Wahlbereich}
+		\drawsemester{4. Semester\\(WiSe 19/20)}
+			\drawmodule{9}{tetris_blue}{transparent}{black}{[Wahlpflicht]\\{}Algorithmik}
+			\drawmodule{9}{tetris_blue}{transparent}{black}{Wahlpflicht}
+		\drawsemester{5. Semester\\(SoSe 20)}
+			\drawmodule{30}{tetris_blue}{transparent}{black}{Abschlussmodul (Masterarbeit)}
+	\end{tetris}
+	\draw
+		[line width=1pt,decorate,decoration={brace,amplitude=10pt,raise=10pt},yshift=0pt]
+		(msc_informatik.north east) -- (msc_informatik.south east)
+		node [black,midway,xshift=20mm] {\shortstack{M. Sc.\\Informatik}}
+	;
+	%
+	\begin{tetris}[msc_physik]
+		\drawsemester{1. Semester\\(WiSe 20/21)}
+			\drawmodule{24}{tetris_red}{transparent}{black}{Vertiefung Physik}
+			\drawmodule{6}{white}{black}{black}{Freier Wahlbereich}		
+		\drawsemester{2. Semester\\(SoSe 21)}
+			\drawmodule{24}{tetris_red}{transparent}{black}{Vertiefung Physik}
+			\drawmodule{6}{white}{black}{black}{Freier Wahlbereich}		
+		\drawsemester{3. Semester\\(WiSe 21/22)}
+			\drawmodule{15}{tetris_red}{transparent}{black}{Einarbeitungsprojekt}
+			\drawmodule{15}{tetris_red}{transparent}{black}{Vorbereitungsprojekt}
+			\drawintegrated{1}{1}{3}{Seminar}
+		\drawsemester{4. Semester\\(SoSe 22)}
+			\drawmodule{30}{tetris_red}{transparent}{black}{Abschlussmodul (Masterarbeit)}
+	\end{tetris}
+	\draw
+		[line width=1pt,decorate,decoration={brace,amplitude=10pt,raise=10pt},yshift=0pt]
+		(msc_physik.north east) -- (msc_physik.south east)
+		node [black,midway,xshift=20mm] {\shortstack{M. Sc.\\Physik}}
+	;
+	%
+	\legend{tetris_blue}{Informatik}
+	\legend{tetris_red}{Physik}
+	\legend{tetris_gray}{Mathematik}
+	\legend{tetris_yellow}{Naturwissenschaftliche Informatik}
+	\legend{tetris_green}{Sonstiges}
+\end{tikzpicture}
+}
+
+\end{document}

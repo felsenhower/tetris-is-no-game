@@ -1,0 +1,293 @@
+\ProvidesPackage{ting}[2018/11/12 Tetris is not a game]
+
+\RequirePackage{lmodern}
+\RequirePackage{tikz}
+\RequirePackage{forloop}
+\RequirePackage{intcalc}
+
+\usetikzlibrary{arrows,
+                backgrounds,
+                calc,
+                decorations,
+                decorations.pathmorphing,
+                fit,
+                intersections,
+                positioning,
+                shapes.geometric,
+                shapes.misc}
+
+
+\renewcommand{\familydefault}{\sfdefault}
+
+\definecolor{tetris_blue}{RGB}{140,175,216}
+\definecolor{tetris_yellow}{RGB}{255,217,89}
+\definecolor{tetris_red}{RGB}{255,77,77}
+\definecolor{tetris_gray}{RGB}{190,190,190}
+\definecolor{tetris_green}{RGB}{190,255,0}
+\definecolor{tetris_orange}{RGB}{255,165,100}
+
+\newcommand{\pale}[1]{#1!67!white}
+
+\newlength{\boxwidth}
+\newlength{\legendsep}
+\newlength{\modulepadding}
+\newlength{\semlabelsep}
+\newlength{\semsep}
+\newlength{\tetrissep}
+
+% Height of the gray boxes in the background of a module and width of a module with 3 CP
+\setlength{\boxwidth}{20mm}
+
+% Padding of the filling of a module in front of the gray boxes
+\setlength{\modulepadding}{1mm}
+
+% Distance between the label of a semester and the semester's modules
+\setlength{\semlabelsep}{5mm}
+
+% Distance between to semesters
+\setlength{\semsep}{2mm}
+
+% Distance between two tetrises
+\setlength{\tetrissep}{10mm}
+
+% Distance between the entries of the legend
+\setlength{\legendsep}{5mm}
+
+\newcounter{semesterct}
+\setcounter{semesterct}{0}
+
+\newcounter{modulect}
+\setcounter{modulect}{0}
+
+\newcounter{tetrisct}
+\setcounter{tetrisct}{0}
+
+\newcounter{legendct}
+\setcounter{legendct}{0}
+
+\makeatletter
+
+\newcommand{\legend}[2]{%
+	\stepcounter{legendct}%
+	\ifnum\value{legendct}=1%
+		\node[draw,black,fill=#1,label={[label distance=1mm]0:#2}]%
+		      at ($(sem_\the\value{semesterct}_SW)!1/2!(sem_\the\value{semesterct}_SE)+(0,-1\tetrissep)$)%
+		      (legend_\the\value{legendct}) {};%
+	\else%
+		\node[draw,black,fill=#1,label={[label distance=1mm]0:#2}]%
+		     at ($(legend_\the\numexpr\value{legendct}-1\relax)+(0,-1\legendsep)$)%
+		     (legend_\the\value{legendct}) {};%
+	\fi%
+}
+
+
+\newcommand{\insidetetris}{\false}
+\newcommand{\insidetetristrue}{\true}
+
+% Creates a tetris environment
+% #1: Name of the bounding box of the tetris
+\newenvironment{tetris}[1][]{%
+	\begingroup%
+	\renewcommand{\insidetetris}{\true}%
+    \ifx&#1&%
+		\begin{scope}%
+	\else%
+		\begin{scope}[local bounding box=#1]%
+	\fi%
+	\stepcounter{tetrisct}%
+	\ifnum\value{tetrisct}>1%
+		\stepcounter{semesterct}%
+		\node [below=\tetrissep of sem_\the\numexpr\value{semesterct}-1\relax_SW]%
+		      (sem_\the\value{semesterct}_SW) {};%
+	\fi%
+}{%
+	\end{scope}%
+	\endgroup%
+	\setcounter{legendct}{0}
+	\renewcommand{\insidetetris}{\false}%
+}
+
+% Creates a single gray box for the background of a module
+% #1: Name of the node to put the box at (north west anchor).
+% #2: Prefix of the nodes of the box: #2_NW, #2_SE, #2_SW, #2_NE, #2_W
+%     (where NW is the north west anchor, ...).
+% #3: Width of the box in CP (for 1 and 2 a partition of a square is drawn).
+\newcommand{\@creditbox}[3]{%
+	\ifx\insidetetris\insidetetristrue\relax%
+		\node [at=(#1.center)] (#2_NW) {};%
+		\node [below right=\boxwidth and #3/3*\boxwidth of #2_NW.center] (#2_SE) {};%
+		\node [at=(#2_NW.center|-#2_SE.center)] (#2_SW) {};%
+		\node [at=(#2_SE.center|-#2_NW.center)] (#2_NE) {};%
+		\node [at=($(#2_NW.center)!1/2!(#2_SW.center)$)] (#2_W) {};%
+		\draw[line width=1.5pt,lightgray] (#2_NW.center) -- (#2_NE.center)%
+	                        -- (#2_SE.center)%
+	                        -- (#2_SW.center)%
+	                        -- (#2_NW.center) --cycle;%	
+	\else%
+		\PackageError{mypackage}{Not inside tetris environment}{This macro must be called from a tetris environment}%
+	\fi%
+}
+
+% Draws the number of boxes that are needed for a certain amount of CP
+% #1: Name of the node to put the first box at (north west anchor).
+% #2: Prefix of the group of boxes (where #2_0 is the first box, ...)
+% #3: Number of CP (if not divisible by 3, the last box will be cut)
+\newcounter{creditboxesct}
+\newcommand{\@creditboxes}[3]{%
+	\ifnum#3 > 3%
+		\@creditbox{#1}{#2_0}{3};%
+		\forloop{creditboxesct}{1}{\value{creditboxesct} < \the\numexpr\intcalcDiv{#3+2}{3}-1\relax}%
+		{%
+			\@creditbox{#2_\the\numexpr\value{creditboxesct}-1\relax_NE}%
+			          {#2_\the\numexpr\value{creditboxesct}\relax}{3};%
+		}%
+		\@creditbox{#2_\the\numexpr\intcalcDiv{#3+2}{3}-2\relax_NE}%
+		          {#2_\the\numexpr\intcalcDiv{#3+2}{3}-1\relax}%
+		          {\the\numexpr#3-(\intcalcDiv{#3+2}{3}-1)*3\relax};%
+	\else%
+	  \@creditbox{#1}{#2_0}{#3};%
+	\fi%
+}
+
+% Creates the filling in the foreground of a module with text
+% #1: Prefix of the north west anchor of the filling
+% #2: Prefix of the south west anchor of the filling
+% #3: Color of the filling
+% #4: Color of the outline
+% #5: Color of the text
+% #6: Text (name of the module)
+\newcommand{\@modulefilling}[6]{%
+	\ifx\insidetetris\insidetetristrue\relax%
+		\draw[#4,fill=#3,fill opacity=0.96,line width=1pt]%
+		($(#1_NW.center)+(\modulepadding,-\modulepadding)$)%
+		rectangle%
+		($(#2_SE.center)+(-\modulepadding,\modulepadding)$)%
+		node[pos=.5,#5] {\shortstack{#6}};%
+	\else%
+		\PackageError{mypackage}{Not inside tetris environment}{This macro must be called from a tetris environment}%
+	\fi%
+}
+
+% Draws a module
+% #1: Name of the node to put the module at (north west anchor).
+% #2: Prefix of the group of boxes (where #2_0 is the first box, ...)
+% #3: Number of CP (if not divisible by 3, the last box will be cut)
+% #4: Color of the filling
+% #5: Color of the outline
+% #6: Color of the text
+% #7: Text (name of the module)
+\newcommand{\@module}[7]{%
+	\@creditboxes{#1_NE}{#2}{#3}%
+	\@modulefilling{#2_0}{#2_\the\numexpr\intcalcDiv{#3+2}{3}-1\relax}{#4}{#5}{#6}{#7}%
+	\node [at=(#2_0_NW)] (#2_NW) {};%
+	\node [at=(#2_0_SW)] (#2_SW) {};%
+	\node [at=(#2_\the\numexpr\intcalcDiv{#3+2}{3}-1\relax_NE)] (#2_NE) {};%
+	\node [at=(#2_\the\numexpr\intcalcDiv{#3+2}{3}-1\relax_SE)] (#2_SE) {};%
+}
+
+% Draws an integrated module part (like a seminar)
+% #1: Name of the node to put the module part at (north west anchor).
+% #2: Number of CP (is rounded to the next number divisable by 3)
+% #3: Text of the module part
+\newcommand{\@integrated}[3]{%
+	\ifx\insidetetris\insidetetristrue\relax%
+		\draw[line width=1pt,dashed,black]%
+		($(#1_0_NW.center)+(2\modulepadding,-2\modulepadding)$)%
+		rectangle%
+		($(#1_\the\numexpr\intcalcDiv{#2+2}{3}-1\relax_SE.center)+(-2\modulepadding,2\modulepadding)$)%
+		node[pos=.5,black] {\shortstack{#3}};%
+	\else%
+		\PackageError{mypackage}{Not inside tetris environment}{This macro must be called from a tetris environment}%
+	\fi%
+}
+
+% Begins a semester
+% #1: Name of the node to put the semester below (north west anchor)
+%     (if empty, {0,0} will be used)
+% #2: Prefix of the semester
+% #3: Text of the semester
+\newcommand{\@semester}[3]{%
+	\ifx\insidetetris\insidetetristrue\relax%
+	    \ifx&#1&%
+			\node (#2_NW) {};%
+		\else%
+			\node at ($(#1_SW)+(0,-\semsep)$) (#2_NW) {};%
+		\fi%
+		\node [below right=\boxwidth and 4/3*\boxwidth of #2_NW.center] (#2_SE) {};%
+		\node [at=(#2_NW.center|-#2_SE.center)] (#2_SW) {};%
+		\node [at=(#2_SE.center|-#2_NW.center)] (#2_NE) {};%
+		\node [left=\semlabelsep of $(#2_NE.center)!1/2!(#2_SE.center)$, anchor=east]  {\shortstack{#3}};%
+	\else%
+		\PackageError{mypackage}{Not inside tetris environment}{This macro must be called from a tetris environment}%
+	\fi%
+}
+
+% Draws a new semester with name
+% #1: Text (name) of the semester
+\newcommand{\drawsemester}[1]{%
+	\setcounter{modulect}{0}%
+	\stepcounter{semesterct}%
+	\ifnum\value{semesterct}=1%
+		\@semester{}{sem_\the\value{semesterct}}{#1}%
+	\else%
+		\@semester{sem_\the\numexpr\value{semesterct}-1\relax}{sem_\the\value{semesterct}}{#1}%
+	\fi%
+	\node [at=(sem_\the\value{semesterct}_NE)] (sem_\the\value{semesterct}_mod_0_NE) {};%
+}
+
+% Draws a new module in the current semester started with \drawsemester
+% #1: Number of CP (if not divisible by 3, the last box will be cut)
+% #2: Color of the filling
+% #3: Color of the outline
+% #4: Color of the text
+% #5: Text (name of the module)
+\newcommand{\drawmodule}[5]{%
+	\stepcounter{modulect}%
+	\@module{sem_\the\value{semesterct}_mod_\the\numexpr\value{modulect}-1\relax}%
+	        {sem_\the\value{semesterct}_mod_\the\value{modulect}}%
+	        {#1}{#2}{#3}{#4}{#5}%
+}
+
+% Draws a new unfinished module in the current semester started with \drawsemester
+% #1: Number of CP (if not divisible by 3, the last box will be cut)
+% #2: Color of the filling
+% #3: Color of the outline
+% #4: Color of the text
+% #5: Text (name of the module)
+\newcommand{\drawmoduleincomplete}[5]{%
+	\drawmodule{#1}{\pale{#2}}{#3}{\pale{#4}}{#5}%
+}
+
+
+% Draws a new dummy module in the current semester: Only the gray boxes,
+% but no filling or text. This is needed for \drawmodulemulti
+% #1: Number of CP
+\newcommand{\drawdummy}[1]{%
+	\drawmodule{#1}{none}{transparent}{transparent}{}%
+}
+
+% Draws a new multi-semester module over the boxes created with \drawdummy
+% #1: Number of semesters this module takes place in
+% #2: Color of the filling
+% #3: Color of the outline
+% #4: Color of the text
+% #5: Text (name of the module)
+\newcommand{\drawmodulemulti}[5]{%
+	\@modulefilling{sem_\the\numexpr\value{semesterct}+1-#1\relax_mod_\the\value{modulect}}%
+	               {sem_\the\value{semesterct}_mod_\the\value{modulect}}%
+	               {#2}{#3}{#4}{#5}%
+}
+
+% Draws a new integrated module part into the current module
+% #1: Number of semesters the superordinate module takes place in
+% #2: Semester that the module part takes place in
+% #3: Number of CP
+% #4: Text (name of the module part)
+\newcommand{\drawintegrated}[4]{%
+	\@integrated{sem_\the\numexpr\value{semesterct}+#2-#1\relax_mod_\the\value{modulect}}%
+	            {#3}{#4}%
+}
+
+\makeatother
+
+\endinput
