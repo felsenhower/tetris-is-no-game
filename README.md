@@ -113,5 +113,5 @@
   * “Skidiki-pap-pap”
   * and a “Pu-pu-pudrrrr-boom”
   * “Skya”
-  * “du-du-ku-ku-dun-dun”
+  * “Du-du-ku-ku-dun-dun”
   * “Poom, poom”, you dun know
