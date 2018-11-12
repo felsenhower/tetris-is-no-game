@@ -108,12 +108,10 @@
 \end{document}
 ```
 * If used incorrectly, the ting might also go
-  * “skrrrrrrrrrrrrrah”
-  * “pap pap kak kak kak”
-  * “skibidipap pap”
-  * and a “pupubrrrrrrrrrrdoom”
-  * “skya”
-  * “du du”
-  * “kun kun”
-  * “boom boom”
-
+  * “Skrrrrrrrrrrrahh”
+  * “Pap, pap, ka-ka-ka”
+  * “Skidiki-pap-pap”
+  * and a “Pu-pu-pudrrrr-boom”
+  * “Skya”
+  * “du-du-ku-ku-dun-dun”
+  * “Poom, poom”, you dun know
