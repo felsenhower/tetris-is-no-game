@@ -200,10 +200,12 @@
 % #3: Text of the module part
 \newcommand{\@integrated}[3]{%
 	\ifx\insidetetris\insidetetristrue\relax%
+		\pgfmathparse{int(int(((int(ceil(#2))+2)/3))-1)}%
+		\edef\numcpboxes{\pgfmathresult}%
 		\draw[line width=1pt,dashed,black]%
 		($(#1_0_NW.center)+(2\modulepadding,-2\modulepadding)$)%
 		rectangle%
-		($(#1_\the\numexpr\intcalcDiv{#2+2}{3}-1\relax_SE.center)+(-2\modulepadding,2\modulepadding)$)%
+		($(#1_\numcpboxes_SE.center)+(-2\modulepadding,2\modulepadding)$)%
 		node[pos=.5,black] {\shortstack{#3}};%
 	\else%
 		\PackageError{mypackage}{Not inside tetris environment}{This macro must be called from a tetris environment}%
