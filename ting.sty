@@ -2,8 +2,6 @@
 
 \RequirePackage{lmodern}
 \RequirePackage{tikz}
-\RequirePackage{forloop}
-\RequirePackage{intcalc}
 
 \usetikzlibrary{arrows,
                 backgrounds,
@@ -132,22 +130,22 @@
 % #1: Name of the node to put the first box at (north west anchor).
 % #2: Prefix of the group of boxes (where #2_0 is the first box, ...)
 % #3: Number of CP (if not divisible by 3, the last box will be cut)
-\newcounter{creditboxesct}
 \newcommand{\@creditboxes}[3]{%
-	\newdimen\dummyDim%
-	\dummyDim = #3 pt
-	\ifdim \dummyDim > 3pt
+	\pgfmathparse{int(ceil(#3))}%
+	\edef\integercp{\pgfmathresult}%
+	\ifnum\integercp > 3%
 		\@creditbox{#1}{#2_0}{3};%
-		\pgfmathparse{int(int(((int(ceil(#3))+2)/3))-1)}%
+		\pgfmathparse{int(int((\integercp+2)/3)-1)}%
 		\edef\numcpboxes{\pgfmathresult}%
-		\forloop{creditboxesct}{1}{\value{creditboxesct} < \numcpboxes}%
-		{%
-			\@creditbox{#2_\the\numexpr\value{creditboxesct}-1\relax_NE}%
-			           {#2_\the\numexpr\value{creditboxesct}\relax}%
-			           {3};%
-		}%
 		\pgfmathparse{int(\numcpboxes-1)}%
 		\edef\almostnumcpboxes{\pgfmathresult}%
+		\ifnum\integercp > 6%
+			\foreach \i in {1,...,\almostnumcpboxes} {%
+				\@creditbox{#2_\the\numexpr\i-1\relax_NE}%
+				           {#2_\the\numexpr\i\relax}%
+				           {3};%
+			}%
+		\fi%
 		\pgfmathparse{#3-((int((#3+2.5)/3)-1)*3)}%
 		\edef\lastboxwidth{\pgfmathresult}%
 		\@creditbox{#2_\almostnumcpboxes_NE}%
