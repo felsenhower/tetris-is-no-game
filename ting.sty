@@ -134,18 +134,27 @@
 % #3: Number of CP (if not divisible by 3, the last box will be cut)
 \newcounter{creditboxesct}
 \newcommand{\@creditboxes}[3]{%
-	\ifnum#3 > 3%
+	\newdimen\dummyDim%
+	\dummyDim = #3 pt
+	\ifdim \dummyDim > 3pt
 		\@creditbox{#1}{#2_0}{3};%
-		\forloop{creditboxesct}{1}{\value{creditboxesct} < \the\numexpr\intcalcDiv{#3+2}{3}-1\relax}%
+		\pgfmathparse{int(int(((int(ceil(#3))+2)/3))-1)}%
+		\edef\numcpboxes{\pgfmathresult}%
+		\forloop{creditboxesct}{1}{\value{creditboxesct} < \numcpboxes}%
 		{%
 			\@creditbox{#2_\the\numexpr\value{creditboxesct}-1\relax_NE}%
-			          {#2_\the\numexpr\value{creditboxesct}\relax}{3};%
+			           {#2_\the\numexpr\value{creditboxesct}\relax}%
+			           {3};%
 		}%
-		\@creditbox{#2_\the\numexpr\intcalcDiv{#3+2}{3}-2\relax_NE}%
-		          {#2_\the\numexpr\intcalcDiv{#3+2}{3}-1\relax}%
-		          {\the\numexpr#3-(\intcalcDiv{#3+2}{3}-1)*3\relax};%
+		\pgfmathparse{int(\numcpboxes-1)}%
+		\edef\almostnumcpboxes{\pgfmathresult}%
+		\pgfmathparse{#3-((int((#3+2.5)/3)-1)*3)}%
+		\edef\lastboxwidth{\pgfmathresult}%
+		\@creditbox{#2_\almostnumcpboxes_NE}%
+		           {#2_\numcpboxes}%
+		           {\lastboxwidth};%
 	\else%
-	  \@creditbox{#1}{#2_0}{#3};%
+		\@creditbox{#1}{#2_0}{#3};%
 	\fi%
 }
 
@@ -178,11 +187,13 @@
 % #7: Text (name of the module)
 \newcommand{\@module}[7]{%
 	\@creditboxes{#1_NE}{#2}{#3}%
-	\@modulefilling{#2_0}{#2_\the\numexpr\intcalcDiv{#3+2}{3}-1\relax}{#4}{#5}{#6}{#7}%
+	\pgfmathparse{int(int(((int(ceil(#3))+2)/3))-1)}%
+	\edef\numcpboxes{\pgfmathresult}%
+	\@modulefilling{#2_0}{#2_\numcpboxes}{#4}{#5}{#6}{#7}%
 	\node [at=(#2_0_NW)] (#2_NW) {};%
 	\node [at=(#2_0_SW)] (#2_SW) {};%
-	\node [at=(#2_\the\numexpr\intcalcDiv{#3+2}{3}-1\relax_NE)] (#2_NE) {};%
-	\node [at=(#2_\the\numexpr\intcalcDiv{#3+2}{3}-1\relax_SE)] (#2_SE) {};%
+	\node [at=(#2_\numcpboxes_NE)] (#2_NE) {};%
+	\node [at=(#2_\numcpboxes_SE)] (#2_SE) {};%
 }
 
 % Draws an integrated module part (like a seminar)

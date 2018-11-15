@@ -2,12 +2,12 @@
 	\drawsemester{1. Semester\\(WiSe)}
 		\drawmodule{6}{tetris_blue}{transparent}{black}{Softwareentwicklung I}
 		\drawmodule{9}{tetris_red}{transparent}{black}{Allgemeine und\\{}Anorganische Chemie}
-		\drawmodule{5}{tetris_red}{transparent}{black}{Physikalische\\{}Chemie I}
+		\drawmodule{4.5}{tetris_red}{transparent}{black}{Physikalische\\{}Chemie I}
 		\drawmodule{9}{tetris_gray}{transparent}{black}{Mathematik I für Physiker}
 	\drawsemester{2. Semester\\(SoSe)}
 		\drawmodule{9}{tetris_blue}{transparent}{black}{Formale Grundlagen\\der Informatik I}
 		\drawmodule{9}{tetris_red}{transparent}{black}{Organische Chemie}
-		\drawmodule{5}{tetris_red}{transparent}{black}{Physikalische\\{}Chemie II}
+		\drawmodule{4.5}{tetris_red}{transparent}{black}{Physikalische\\{}Chemie II}
 		\drawmodule{9}{tetris_gray}{transparent}{black}{Mathematik II für Physiker}
 	\drawsemester{3. Semester\\(WiSe)}
 		\drawmodule{6}{tetris_blue}{transparent}{black}{Algorithmen und\\{}Datenstrukturen}
