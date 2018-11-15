@@ -8,7 +8,7 @@
 
 [...]
 
-\usepackage{../ting}
+\usepackage{ting}
 
 \begin{document}
 
@@ -115,3 +115,48 @@
   * “Skya”
   * “Du-du-ku-ku-dun-dun”
   * “Poom, poom”, you dun know
+
+## Documentation
+
+### The tetris environment
+* Place all ting macros inside a `tetris` environment
+* You can append a name to the environment as an optional parameter
+```latex
+\documentclass[...]
+
+[...]
+
+\usepackage{ting}
+
+\begin{document}
+
+[...]
+
+\begin{tikzpicture}
+	\begin{tetris}[optional_name]
+		[...]	
+	\end{tetris}
+\end{tikzpicture}
+
+[...]
+
+\end{document}
+```
+
+* If you name the environment, you can refer to its bounding box, e.g. to put a brace next to it:
+```latex
+	\begin{tetris}[cool_name]
+		[...]	
+	\end{tetris}
+	\draw
+		[line width=1pt,decorate,decoration={brace,amplitude=10pt,raise=10pt},yshift=0pt]
+		(cool_name.north east) -- (cool_name.south east) % <-- Enter name here
+		node [black,midway,xshift=20mm] {\shortstack{This is\\a tetris!}}
+	;
+```
+
+### Creating semesters
+* You can create a new row inside the tetris via `\drawsemester`
+* This macro will break the line inside the tetris and assign all following modules to the new semester
+* Arguments:
+  * `#1`: Name of the semester (the text to show at the left)
