@@ -8,7 +8,7 @@
 
 [...]
 
-\usepackage{../ting}
+\usepackage{ting}
 
 \begin{document}
 
