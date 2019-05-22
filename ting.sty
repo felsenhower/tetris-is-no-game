@@ -16,8 +16,6 @@
                 shapes.misc}
 
 
-\renewcommand{\familydefault}{\sfdefault}
-
 \definecolor{tetris_blue}{RGB}{140,175,216}
 \definecolor{tetris_yellow}{RGB}{255,217,89}
 \definecolor{tetris_red}{RGB}{255,77,77}
@@ -70,13 +68,14 @@
 % #1: Filling of the item
 % #2: Label of the item
 \newcommand{\legend}[2]{%
+	\renewcommand{\familydefault}{\sfdefault}
 	\stepcounter{legendct}%
 	\ifnum\value{legendct}=1%
-		\node[draw,black,fill=#1,label={[label distance=1mm]0:#2}]%
+		\node[draw,black,fill=#1,label={[label distance=1mm]0:\sffamily#2}]%
 		      at ($(sem_\the\value{semesterct}_SW)!1/2!(sem_\the\value{semesterct}_SE)+(0,-1\tetrissep)$)%
 		      (legend_\the\value{legendct}) {};%
 	\else%
-		\node[draw,black,fill=#1,label={[label distance=1mm]0:#2}]%
+		\node[draw,black,fill=#1,label={[label distance=1mm]0:\sffamily#2}]%
 		     at ($(legend_\the\numexpr\value{legendct}-1\relax)+(0,-1\legendsep)$)%
 		     (legend_\the\value{legendct}) {};%
 	\fi%
@@ -163,9 +162,12 @@
 % #1: Text
 % #2: Width of the text
 \newcommand{\@label}[2]{
+  \renewcommand{\familydefault}{\sfdefault}%
   \shortstack{%
     \begin{minipage}{#2}%
       \begin{center}%
+        \renewcommand{\familydefault}{\sfdefault}%
+        \sffamily%
         #1%
       \end{center}%
   \end{minipage}%
