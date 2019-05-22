@@ -1,7 +1,8 @@
-\ProvidesPackage{ting}[2018/11/12 Tetris is not a game]
+\ProvidesPackage{ting}[2019/05/22 Tetris is not a game]
 
 \RequirePackage{lmodern}
 \RequirePackage{tikz}
+\RequirePackage{calc}
 
 \usetikzlibrary{arrows,
                 backgrounds,
@@ -65,6 +66,9 @@
 
 \makeatletter
 
+% Creates a new legend if necessary and adds an item to it
+% #1: Filling of the item
+% #2: Label of the item
 \newcommand{\legend}[2]{%
 	\stepcounter{legendct}%
 	\ifnum\value{legendct}=1%
@@ -77,7 +81,6 @@
 		     (legend_\the\value{legendct}) {};%
 	\fi%
 }
-
 
 \newcommand{\insidetetris}{\false}
 \newcommand{\insidetetristrue}{\true}
@@ -120,7 +123,7 @@
 		\draw[line width=1.5pt,lightgray] (#2_NW.center) -- (#2_NE.center)%
 	                        -- (#2_SE.center)%
 	                        -- (#2_SW.center)%
-	                        -- (#2_NW.center) --cycle;%	
+	                        -- (#2_NW.center) --cycle;%
 	\else%
 		\PackageError{mypackage}{Not inside tetris environment}{This macro must be called from a tetris environment}%
 	\fi%
@@ -156,6 +159,27 @@
 	\fi%
 }
 
+% Draws a label
+% #1: Text
+% #2: Width of the text
+\newcommand{\@label}[2]{
+  \shortstack{%
+    \begin{minipage}{#2}%
+      \begin{center}%
+        #1%
+      \end{center}%
+  \end{minipage}%
+  }%
+}
+
+
+% Draws the label of a module
+% #1: Text (name of the module)
+% #2: Number of CP
+\newcommand{\@modulelabel}[2]{%
+  \@label{#1}{\dimexpr\boxwidth*#2/3\relax}%
+}
+
 % Creates the filling in the foreground of a module with text
 % #1: Prefix of the north west anchor of the filling
 % #2: Prefix of the south west anchor of the filling
@@ -163,13 +187,14 @@
 % #4: Color of the outline
 % #5: Color of the text
 % #6: Text (name of the module)
-\newcommand{\@modulefilling}[6]{%
+% #7: Number of CP
+\newcommand{\@modulefilling}[7]{%
 	\ifx\insidetetris\insidetetristrue\relax%
 		\draw[#4,fill=#3,fill opacity=0.96,line width=1pt]%
 		($(#1_NW.center)+(\modulepadding,-\modulepadding)$)%
 		rectangle%
 		($(#2_SE.center)+(-\modulepadding,\modulepadding)$)%
-		node[pos=.5,#5] {\shortstack{#6}};%
+		node[pos=.5,#5] {\@modulelabel{#6}{#7}};%
 	\else%
 		\PackageError{mypackage}{Not inside tetris environment}{This macro must be called from a tetris environment}%
 	\fi%
@@ -187,7 +212,7 @@
 	\@creditboxes{#1_NE}{#2}{#3}%
 	\pgfmathparse{int(int(((int(ceil(#3))+2)/3))-1)}%
 	\edef\numcpboxes{\pgfmathresult}%
-	\@modulefilling{#2_0}{#2_\numcpboxes}{#4}{#5}{#6}{#7}%
+	\@modulefilling{#2_0}{#2_\numcpboxes}{#4}{#5}{#6}{#7}{#3}%
 	\node [at=(#2_0_NW)] (#2_NW) {};%
 	\node [at=(#2_0_SW)] (#2_SW) {};%
 	\node [at=(#2_\numcpboxes_NE)] (#2_NE) {};%
@@ -206,10 +231,16 @@
 		($(#1_0_NW.center)+(2\modulepadding,-2\modulepadding)$)%
 		rectangle%
 		($(#1_\numcpboxes_SE.center)+(-2\modulepadding,2\modulepadding)$)%
-		node[pos=.5,black] {\shortstack{#3}};%
+		node[pos=.5,black] {\@modulelabel{#3}{#2}};%
 	\else%
 		\PackageError{mypackage}{Not inside tetris environment}{This macro must be called from a tetris environment}%
 	\fi%
+}
+
+% Draws the label of a semester
+% #1: Text of the semester
+\newcommand{\@semesterlabel}[1]{
+  \@label{#1}{\widthof{\shortstack{#1}}}%
 }
 
 % Begins a semester
@@ -227,7 +258,7 @@
 		\node [below right=\boxwidth and 4/3*\boxwidth of #2_NW.center] (#2_SE) {};%
 		\node [at=(#2_NW.center|-#2_SE.center)] (#2_SW) {};%
 		\node [at=(#2_SE.center|-#2_NW.center)] (#2_NE) {};%
-		\node [left=\semlabelsep of $(#2_NE.center)!1/2!(#2_SE.center)$, anchor=east]  {\shortstack{#3}};%
+		\node [left=\semlabelsep of $(#2_NE.center)!1/2!(#2_SE.center)$, anchor=east]  {\@semesterlabel{#3}};%
 	\else%
 		\PackageError{mypackage}{Not inside tetris environment}{This macro must be called from a tetris environment}%
 	\fi%
@@ -269,11 +300,13 @@
 	\drawmodule{#1}{\pale{#2}}{#3}{\pale{#4}}{#5}%
 }
 
+\def\currentmodulecp{0}
 
 % Draws a new dummy module in the current semester: Only the gray boxes,
 % but no filling or text. This is needed for \drawmodulemulti
 % #1: Number of CP
 \newcommand{\drawdummy}[1]{%
+  \def\currentmodulecp{#1}
 	\drawmodule{#1}{none}{transparent}{transparent}{}%
 }
 
@@ -286,7 +319,7 @@
 \newcommand{\drawmodulemulti}[5]{%
 	\@modulefilling{sem_\the\numexpr\value{semesterct}+1-#1\relax_mod_\the\value{modulect}}%
 	               {sem_\the\value{semesterct}_mod_\the\value{modulect}}%
-	               {#2}{#3}{#4}{#5}%
+	               {#2}{#3}{#4}{#5}{\currentmodulecp}%
 }
 
 % Draws a new integrated module part into the current module
