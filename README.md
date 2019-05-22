@@ -2,7 +2,7 @@
 * **T**etris **i**s **n**ot a **g**ame.
 * Tetris is serious matter.
 * If used correctly, the ting might go like
-![tetris](https://github.com/felsenhower/tetris-is-no-game/raw/master/samples/14felgenh.png)
+![tetris](https://github.com/felsenhower/tetris-is-no-game/raw/master/samples/sample.png)
 ```latex
 \documentclass[12pt,a4paper]{article}
 
