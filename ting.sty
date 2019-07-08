@@ -1,4 +1,4 @@
-\ProvidesPackage{ting}[2019/05/22 Tetris is not a game]
+\ProvidesPackage{ting}[2019/07/08 Tetris is not a game]
 
 \RequirePackage{lmodern}
 \RequirePackage{tikz}
@@ -22,6 +22,16 @@
 \definecolor{tetris_gray}{RGB}{190,190,190}
 \definecolor{tetris_green}{RGB}{190,255,0}
 \definecolor{tetris_orange}{RGB}{255,165,100}
+\definecolor{tetris_light_blue}{RGB}{84,254,253}
+\definecolor{tetris_light_green}{RGB}{157,221,88}
+\definecolor{tetris_light_yellow}{RGB}{241,253,178}
+\definecolor{tetris_mci_blue}{RGB}{113,169,251}
+\definecolor{tetris_mci_light_blue}{RGB}{220,230,242}
+\definecolor{tetris_purple}{RGB}{204,153,255}
+\definecolor{tetris_dark_green}{RGB}{0,176,80}
+\definecolor{tetris_itmc_yellow}{RGB}{245,250,85}
+\definecolor{tetris_light_red}{RGB}{255,228,253}
+
 
 \newcommand{\pale}[1]{#1!50!white}
 
@@ -202,6 +212,28 @@
 	\fi%
 }
 
+% Creates the filling in the foreground of a module with text and a vertical
+% color gradient
+% #1: Prefix of the north west anchor of the filling
+% #2: Prefix of the south west anchor of the filling
+% #3: 1st Color of the filling
+% #4: 2nd Color of the filling
+% #5: Color of the outline
+% #6: Color of the text
+% #7: Text (name of the module)
+% #8: Number of CP
+\newcommand{\@modulefillingshade}[8]{%
+	\ifx\insidetetris\insidetetristrue\relax%
+		\shadedraw[top color=#3,bottom color=#4, draw=#5, line width=1pt]%
+		($(#1_NW.center)+(\modulepadding,-\modulepadding)$)%
+		rectangle%
+		($(#2_SE.center)+(-\modulepadding,\modulepadding)$)%
+		node[pos=.5,#6] {\@modulelabel{#7}{#8}};%
+	\else%
+		\PackageError{mypackage}{Not inside tetris environment}{This macro must be called from a tetris environment}%
+	\fi%
+}
+
 % Draws a module
 % #1: Name of the node to put the module at (north west anchor).
 % #2: Prefix of the group of boxes (where #2_0 is the first box, ...)
@@ -215,6 +247,26 @@
 	\pgfmathparse{int(int(((int(ceil(#3))+2)/3))-1)}%
 	\edef\numcpboxes{\pgfmathresult}%
 	\@modulefilling{#2_0}{#2_\numcpboxes}{#4}{#5}{#6}{#7}{#3}%
+	\node [at=(#2_0_NW)] (#2_NW) {};%
+	\node [at=(#2_0_SW)] (#2_SW) {};%
+	\node [at=(#2_\numcpboxes_NE)] (#2_NE) {};%
+	\node [at=(#2_\numcpboxes_SE)] (#2_SE) {};%
+}
+
+% Draws a module with a vertical color gradient
+% #1: Name of the node to put the module at (north west anchor).
+% #2: Prefix of the group of boxes (where #2_0 is the first box, ...)
+% #3: Number of CP (if not divisible by 3, the last box will be cut)
+% #4: 1st Color of the filling
+% #5: 2nd Color of the filling
+% #6: Color of the outline
+% #7: Color of the text
+% #8: Text (name of the module)
+\newcommand{\@moduleshade}[8]{%
+	\@creditboxes{#1_NE}{#2}{#3}%
+	\pgfmathparse{int(int(((int(ceil(#3))+2)/3))-1)}%
+	\edef\numcpboxes{\pgfmathresult}%
+	\@modulefillingshade{#2_0}{#2_\numcpboxes}{#4}{#5}{#6}{#7}{#8}{#3}%
 	\node [at=(#2_0_NW)] (#2_NW) {};%
 	\node [at=(#2_0_SW)] (#2_SW) {};%
 	\node [at=(#2_\numcpboxes_NE)] (#2_NE) {};%
@@ -290,6 +342,20 @@
 	\@module{sem_\the\value{semesterct}_mod_\the\numexpr\value{modulect}-1\relax}%
 	        {sem_\the\value{semesterct}_mod_\the\value{modulect}}%
 	        {#1}{#2}{#3}{#4}{#5}%
+}
+
+% Draws a new shaded module in the current semester started with \drawsemester
+% #1: Number of CP (if not divisible by 3, the last box will be cut)
+% #2: 1st Color of the filling
+% #3: 2nd Color of the filling
+% #4: Color of the outline
+% #5: Color of the text
+% #6: Text (name of the module)
+\newcommand{\drawmoduleshade}[6]{%
+	\stepcounter{modulect}%
+	\@moduleshade{sem_\the\value{semesterct}_mod_\the\numexpr\value{modulect}-1\relax}%
+	        {sem_\the\value{semesterct}_mod_\the\value{modulect}}%
+	        {#1}{#2}{#3}{#4}{#5}{#6}%
 }
 
 % Draws a new unfinished module in the current semester started with \drawsemester
