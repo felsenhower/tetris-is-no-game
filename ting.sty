@@ -275,17 +275,20 @@
 
 % Draws an integrated module part (like a seminar)
 % #1: Name of the node to put the module part at (north west anchor).
-% #2: Number of CP (is rounded to the next number divisable by 3)
-% #3: Text of the module part
-\newcommand{\@integrated}[3]{%
+% #2: Number of CP (is rounded to the next number divisible by 3)
+% #3: Offset of the part in CP (is rounded to the previous number divisible by 3)
+% #4: Text of the module part
+\newcommand{\@integrated}[4]{%
 	\ifx\insidetetris\insidetetristrue\relax%
-		\pgfmathparse{int(int(((int(ceil(#2))+2)/3))-1)}%
+    \pgfmathparse{int(#3/3)}
+    \edef\numcpoffset{\pgfmathresult}
+		\pgfmathparse{int(int(((int(ceil(#2))+2)/3))-1+\numcpoffset)}%
 		\edef\numcpboxes{\pgfmathresult}%
 		\draw[line width=1pt,dashed,black]%
-		($(#1_0_NW.center)+(2\modulepadding,-2\modulepadding)$)%
+		($(#1_\numcpoffset_NW.center)+(2\modulepadding,-2\modulepadding)$)%
 		rectangle%
 		($(#1_\numcpboxes_SE.center)+(-2\modulepadding,2\modulepadding)$)%
-		node[pos=.5,black] {\@modulelabel{#3}{#2}};%
+		node[pos=.5,black] {\@modulelabel{#4}{#2}};%
 	\else%
 		\PackageError{mypackage}{Not inside tetris environment}{This macro must be called from a tetris environment}%
 	\fi%
@@ -394,10 +397,11 @@
 % #1: Number of semesters the superordinate module takes place in
 % #2: Semester that the module part takes place in
 % #3: Number of CP
-% #4: Text (name of the module part)
-\newcommand{\drawintegrated}[4]{%
+% #4: Offset of the module part inside the module in CP
+% #5: Text (name of the module part)
+\newcommand{\drawintegrated}[5]{%
 	\@integrated{sem_\the\numexpr\value{semesterct}+#2-#1\relax_mod_\the\value{modulect}}%
-	            {#3}{#4}%
+	            {#3}{#4}{#5}%
 }
 
 \makeatother
