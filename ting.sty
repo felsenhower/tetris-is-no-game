@@ -280,8 +280,8 @@
 % #4: Text of the module part
 \newcommand{\@integrated}[4]{%
 	\ifx\insidetetris\insidetetristrue\relax%
-    \pgfmathparse{int(#3/3)}
-    \edef\numcpoffset{\pgfmathresult}
+		\pgfmathparse{int(#3/3)}%
+		\edef\numcpoffset{\pgfmathresult}%
 		\pgfmathparse{int(int(((int(ceil(#2))+2)/3))-1+\numcpoffset)}%
 		\edef\numcpboxes{\pgfmathresult}%
 		\draw[line width=1pt,dashed,black]%
