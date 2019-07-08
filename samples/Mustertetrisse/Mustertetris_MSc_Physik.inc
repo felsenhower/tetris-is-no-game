@@ -8,7 +8,7 @@
 	\drawsemester{3. Semester\\(WiSe)}
 		\drawmodule{15}{tetris_red}{transparent}{black}{Einarbeitungsprojekt}
 		\drawmodule{15}{tetris_red}{transparent}{black}{Vorbereitungsprojekt}
-		\drawintegrated{1}{1}{3}{Seminar}
+		\drawintegrated{1}{1}{3}{0}{Seminar}
 	\drawsemester{4. Semester\\(SoSe)}
 		\drawmodule{30}{tetris_red}{transparent}{black}{Abschlussmodul (Masterarbeit)}
 \end{tetris}

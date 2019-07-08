@@ -12,7 +12,7 @@
 	\drawsemester{3. Semester\\(WiSe)}
 		\drawdummy{6}
 		\drawmodulemulti{2}{tetris_blue}{transparent}{black}{Projekt}
-		\drawintegrated{2}{1}{3}{Seminar}
+		\drawintegrated{2}{1}{3}{0}{Seminar}
 		\drawmodule{9}{tetris_blue}{transparent}{black}{Wahlpflicht}
 		\drawmodule{6}{tetris_blue}{transparent}{black}{Vertiefung\\Informatik}
 		\drawmodule{9}{white}{black}{black}{Freier\\Wahlbereich}
