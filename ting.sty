@@ -1,4 +1,4 @@
-\ProvidesPackage{ting}[2019/07/08 Tetris is not a game]
+\ProvidesPackage{ting}[2019/07/18 Tetris is not a game]
 
 \RequirePackage{lmodern}
 \RequirePackage{tikz}
@@ -71,6 +71,9 @@
 
 \newcounter{legendct}
 \setcounter{legendct}{0}
+
+\newcounter{modulectoffset}
+\setcounter{modulectoffset}{0}
 
 \makeatletter
 
@@ -172,16 +175,16 @@
 % #1: Text
 % #2: Width of the text
 \newcommand{\@label}[2]{
-  \renewcommand{\familydefault}{\sfdefault}%
-  \shortstack{%
-    \begin{minipage}{#2}%
-      \begin{center}%
-        \renewcommand{\familydefault}{\sfdefault}%
-        \sffamily%
-        #1%
-      \end{center}%
-  \end{minipage}%
-  }%
+	\renewcommand{\familydefault}{\sfdefault}%
+	\shortstack{%
+		\begin{minipage}{#2}%
+			\begin{center}%
+				\renewcommand{\familydefault}{\sfdefault}%
+				\sffamily%
+        			#1%
+			\end{center}%
+		\end{minipage}%
+	}%
 }
 
 
@@ -189,7 +192,7 @@
 % #1: Text (name of the module)
 % #2: Number of CP
 \newcommand{\@modulelabel}[2]{%
-  \@label{#1}{\dimexpr\boxwidth*#2/3\relax}%
+	\@label{#1}{\dimexpr\boxwidth*#2/3\relax}%
 }
 
 % Creates the filling in the foreground of a module with text
@@ -297,7 +300,7 @@
 % Draws the label of a semester
 % #1: Text of the semester
 \newcommand{\@semesterlabel}[1]{
-  \@label{#1}{\widthof{\shortstack{#1}}}%
+	\@label{#1}{\widthof{\shortstack{#1}}}%
 }
 
 % Begins a semester
@@ -357,8 +360,8 @@
 \newcommand{\drawmoduleshade}[6]{%
 	\stepcounter{modulect}%
 	\@moduleshade{sem_\the\value{semesterct}_mod_\the\numexpr\value{modulect}-1\relax}%
-	        {sem_\the\value{semesterct}_mod_\the\value{modulect}}%
-	        {#1}{#2}{#3}{#4}{#5}{#6}%
+	             {sem_\the\value{semesterct}_mod_\the\value{modulect}}%
+	             {#1}{#2}{#3}{#4}{#5}{#6}%
 }
 
 % Draws a new unfinished module in the current semester started with \drawsemester
@@ -377,20 +380,60 @@
 % but no filling or text. This is needed for \drawmodulemulti
 % #1: Number of CP
 \newcommand{\drawdummy}[1]{%
-  \def\currentmodulecp{#1}
+	\def\currentmodulecp{#1}
 	\drawmodule{#1}{none}{transparent}{transparent}{}%
 }
 
-% Draws a new multi-semester module over the boxes created with \drawdummy
+% Sets the modulemulti offset to the given value
+% #1: The value to set the offset to
+\newcommand{\setmodulemultioffset}[1]{%
+	\setcounter{modulectoffset}{#1}%
+}
+
+% Draws a new multi-semester module over the boxes created with \drawdummy.
+% Will respect the offset set via \setmodulemultioffset for placement of the
+% module in the first semester it takes place in
 % #1: Number of semesters this module takes place in
 % #2: Color of the filling
 % #3: Color of the outline
 % #4: Color of the text
 % #5: Text (name of the module)
-\newcommand{\drawmodulemulti}[5]{%
-	\@modulefilling{sem_\the\numexpr\value{semesterct}+1-#1\relax_mod_\the\value{modulect}}%
+\newcommand{\@modulemultinostar}[5]{%
+	\@modulefilling{sem_\the\numexpr\value{semesterct}+1-#1\relax_mod_\the\numexpr\value{modulect}+\value{modulectoffset}\relax}%
 	               {sem_\the\value{semesterct}_mod_\the\value{modulect}}%
 	               {#2}{#3}{#4}{#5}{\currentmodulecp}%
+}
+
+% Draws a new multi-semester module over the boxes created with \drawdummy
+% Also allows to manually override the counter of the dummy box of the first
+% semester.
+% #1: Number of semesters this module takes place in
+% #2: Color of the filling
+% #3: Color of the outline
+% #4: Color of the text
+% #5: Text (name of the module)
+% #6: Counter of the dummy box in the first semester the module takes place in
+\newcommand{\@modulemultistar}[6]{
+	\@modulefilling{sem_\the\numexpr\value{semesterct}+1-#1\relax_mod_#6}%
+	               {sem_\the\value{semesterct}_mod_\the\value{modulect}}%
+	               {#2}{#3}{#4}{#5}{\currentmodulecp}%
+}
+
+% Draws a new multi-semester module over the boxes created with \drawdummy
+% Also allows to manually override the counter of the dummy box of the first
+% semester if one uses the starred version. Will otherwise respect the offset
+% set with \setmodulemultioffset.
+% #1: Number of semesters this module takes place in
+% #2: Color of the filling
+% #3: Color of the outline
+% #4: Color of the text
+% #5: Text (name of the module)
+% #6: If starred version is used:
+%     Counter of the dummy box in the first semester the module takes place in
+\newcommand{\drawmodulemulti}{%
+	\@ifstar
+		\@modulemultistar%
+		\@modulemultinostar%
 }
 
 % Draws a new integrated module part into the current module
