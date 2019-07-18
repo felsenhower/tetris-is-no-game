@@ -192,7 +192,7 @@
 % #1: Text (name of the module)
 % #2: Number of CP
 \newcommand{\@modulelabel}[2]{%
-	\@label{#1}{\dimexpr\boxwidth*#2/3\relax}%
+	\@label{#1}{\dimexpr#2\boxwidth/3\relax}%
 }
 
 % Creates the filling in the foreground of a module with text
