@@ -43,7 +43,7 @@
 \newlength{\tetrissep}
 
 % Height of the gray boxes in the background of a module and width of a module with 3 CP
-\setlength{\boxwidth}{20mm}
+\setlength{\boxwidth}{22mm}
 
 % Padding of the filling of a module in front of the gray boxes
 \setlength{\modulepadding}{1mm}
@@ -91,7 +91,7 @@
 	\stepcounter{legendct}%
 	\ifnum\value{legendct}=1%
 		\node[draw,black,fill=#1,label={[label distance=1mm]0:\sffamily#2}]%
-		      at ($(sem_\the\value{semesterct}_SW)!1/2!(sem_\the\value{semesterct}_SE)+(0,-1\tetrissep)$)%
+		      at ($(sem_\the\value{semesterct}.south west)!1/2!(sem_\the\value{semesterct}.south east)+(0,-1\tetrissep)$)%
 		      (legend_\the\value{legendct}) {};%
 	\else%
 		\node[draw,black,fill=#1,label={[label distance=1mm]0:\sffamily#2}]%
@@ -116,8 +116,8 @@
 	\stepcounter{tetrisct}%
 	\ifnum\value{tetrisct}>1%
 		\stepcounter{semesterct}%
-		\node [below=\tetrissep of sem_\the\numexpr\value{semesterct}-1\relax_SW]%
-		      (sem_\the\value{semesterct}_SW) {};%
+		\node [below=\tetrissep of sem_\the\numexpr\value{semesterct}-1\relax.south west]%
+		      (sem_\the\value{semesterct}) {};%
 	\fi%
 }{%
 	\end{scope}%
@@ -126,10 +126,6 @@
 	\renewcommand{\insidetetris}{\false}%
 }
 
-\newlength{\tempboxwidth}
-\setlength{\tempboxwidth}{\dimexpr\boxwidth+0.5mm\relax}
-
-
 % Creates a single gray box for the background of a module
 % #1: Name of the node to put the box at (north west anchor).
 % #2: Prefix of the nodes of the box: #2_NW, #2_SE, #2_SW, #2_NE, #2_W
@@ -137,7 +133,7 @@
 % #3: Width of the box in CP (for 1 and 2 a partition of a square is drawn).
 \newcommand{\@creditbox}[3]{%
 	\ifx\insidetetris\insidetetristrue\relax%
-		\node [fit={(#1)($(#1)+(#3/3*\tempboxwidth,-\tempboxwidth)$)},
+		\node [fit={(#1.north east)($(#1.south east)+(#3/3*\boxwidth,0mm)$)},
 		       inner sep=0mm,draw=lightgray,line width=1.5pt] (#2)  {};%
 		\renewcommand{\lastcreditbox}{#2};%
 	\else%
@@ -160,14 +156,14 @@
 		\edef\almostnumcpboxes{\pgfmathresult}%
 		\ifnum\integercp > 6%
 			\foreach \i in {1,...,\almostnumcpboxes} {%
-				\@creditbox{#2_\the\numexpr\i-1\relax.north east}%
+				\@creditbox{#2_\the\numexpr\i-1\relax}%
 				           {#2_\the\numexpr\i\relax}%
 				           {3};%
 			}%
 		\fi%
 		\pgfmathparse{#3-((int((#3+2.5)/3)-1)*3)}%
 		\edef\lastboxwidth{\pgfmathresult}%
-		\@creditbox{#2_\almostnumcpboxes.north east}%
+		\@creditbox{#2_\almostnumcpboxes}%
 		           {#2_\numcpboxes}%
 		           {\lastboxwidth};%
 	\else%
@@ -253,7 +249,7 @@
 % #6: Color of the text
 % #7: Text (name of the module)
 \newcommand{\@module}[7]{%
-	\@creditboxes{#1.north east}{#2}{#3}%
+	\@creditboxes{#1}{#2}{#3}%
 	\pgfmathparse{int(int(((int(ceil(#3))+2)/3))-1)}%
 	\edef\numcpboxes{\pgfmathresult}%
 	\@modulefilling{#2_0}{#2_\numcpboxes}{#4}{#5}{#6}{#7}{#3}%
@@ -271,7 +267,7 @@
 % #7: Color of the text
 % #8: Text (name of the module)
 \newcommand{\@moduleshade}[8]{%
-	\@creditboxes{#1.north east}{#2}{#3}%
+	\@creditboxes{#1}{#2}{#3}%
 	\pgfmathparse{int(int(((int(ceil(#3))+2)/3))-1)}%
 	\edef\numcpboxes{\pgfmathresult}%
 	\@modulefillingshade{#2_0}{#2_\numcpboxes}{#4}{#5}{#6}{#7}{#8}{#3}%
@@ -316,18 +312,12 @@
 % #3: Text of the semester
 \newcommand{\@semester}[3]{%
 	\ifx\insidetetris\insidetetristrue\relax%
-	    \ifx&#1&%
-			\node (#2_NW) {};%
-			\node (#2) {};%
+		\ifx&#1&%
+			\node [fit={(0,0)($(0,0)+(4/3*\boxwidth,-\boxwidth)$)}] (#2) {};
 		\else%
-			\node at ($(#1_SW)+(0,-\semsep)$) (#2_NW) {};%
-			\node at ($(#1_SW)+(0,-\semsep)$) (#2) {};%
+			\node [fit={($(#1.south west)+(0,-\semsep)$)($(#1.south west)+(4/3*\boxwidth,-\boxwidth-\semsep)$)}] (#2) {};
 		\fi%
-		\node [below right=\boxwidth and 4/3*\boxwidth of #2_NW.center] (#2_SE) {};%
-		\node [at=(#2_NW.center|-#2_SE.center)] (#2_SW) {};%
-		\node [at=(#2_SE.center|-#2_NW.center)] (#2_NE) {};%
-		\node [fit={(#2_NW)(#2_SE)}] (#2) {};
-		\node [left=\semlabelsep of $(#2_NE.center)!1/2!(#2_SE.center)$, anchor=east]  {\@semesterlabel{#3}};%
+		\node [left=\semlabelsep of $(#2.north east)!1/2!(#2.south east)$, anchor=east]  {\@semesterlabel{#3}};%
 	\else%
 		\PackageError{mypackage}{Not inside tetris environment}{This macro must be called from a tetris environment}%
 	\fi%
@@ -339,12 +329,11 @@
 	\setcounter{modulect}{0}%
 	\stepcounter{semesterct}%
 	\ifnum\value{semesterct}=1%
-		\@semester{}{sem_\the\value{semesterct}}{#1}%
+		\@semester{}{sem_1}{#1}%
 	\else%
 		\@semester{sem_\the\numexpr\value{semesterct}-1\relax}{sem_\the\value{semesterct}}{#1}%
 	\fi%
-	\node [at=(sem_\the\value{semesterct}_NE)] (sem_\the\value{semesterct}_mod_0_NE) {};%
-	\node [at=(sem_\the\value{semesterct}_NE)] (sem_\the\value{semesterct}_mod_0) {};%
+	\node [fit={(sem_\the\value{semesterct}.north east)(sem_\the\value{semesterct}.south east)}] (sem_\the\value{semesterct}_mod_0) {};%
 }
 
 % Draws a new module in the current semester started with \drawsemester
