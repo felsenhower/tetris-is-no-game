@@ -1,4 +1,4 @@
-\ProvidesPackage{ting}[2019/07/18 Tetris is not a game]
+\ProvidesPackage{ting}[2020/07/05 Tetris is not a game]
 
 \RequirePackage{lmodern}
 \RequirePackage{tikz}
@@ -75,6 +75,12 @@
 \newcounter{modulectoffset}
 \setcounter{modulectoffset}{0}
 
+% Saved nodes of the last credit box, module filling, etc...
+\newcommand{\lastcreditbox}{\relax}
+\newcommand{\lastmodulefilling}{\relax}
+\newcommand{\lastmodule}{\relax}
+\newcommand{\lastintegrated}{\relax}
+
 \makeatletter
 
 % Creates a new legend if necessary and adds an item to it
@@ -132,6 +138,8 @@
 		\node [at=(#2_NW.center|-#2_SE.center)] (#2_SW) {};%
 		\node [at=(#2_SE.center|-#2_NW.center)] (#2_NE) {};%
 		\node [at=($(#2_NW.center)!1/2!(#2_SW.center)$)] (#2_W) {};%
+		\node [fit={(#2_NW)(#2_SE)},inner sep=0mm,draw=none] (#2) {};%
+		\renewcommand{\lastcreditbox}{#2};%
 		\draw[line width=1.5pt,lightgray] (#2_NW.center) -- (#2_NE.center)%
 	                        -- (#2_SE.center)%
 	                        -- (#2_SW.center)%
@@ -205,11 +213,14 @@
 % #7: Number of CP
 \newcommand{\@modulefilling}[7]{%
 	\ifx\insidetetris\insidetetristrue\relax%
+		\node[fit={($(#1_NW.center)+(\modulepadding,-\modulepadding)$)($(#2_SE.center)+(-\modulepadding,\modulepadding)$)},%
+		      inner sep=0mm,draw=none] (#1_filling) {};%
+		\renewcommand{\lastmodulefilling}{#1_filling};%
 		\draw[#4,fill=#3,fill opacity=0.96,line width=1pt]%
-		($(#1_NW.center)+(\modulepadding,-\modulepadding)$)%
-		rectangle%
-		($(#2_SE.center)+(-\modulepadding,\modulepadding)$)%
-		node[pos=.5,#5] {\@modulelabel{#6}{#7}};%
+		      (#1_filling.north west)%
+		      rectangle%
+		      (#1_filling.south east)%
+		      node[pos=.5,#5] {\@modulelabel{#6}{#7}};%
 	\else%
 		\PackageError{mypackage}{Not inside tetris environment}{This macro must be called from a tetris environment}%
 	\fi%
@@ -254,6 +265,8 @@
 	\node [at=(#2_0_SW)] (#2_SW) {};%
 	\node [at=(#2_\numcpboxes_NE)] (#2_NE) {};%
 	\node [at=(#2_\numcpboxes_SE)] (#2_SE) {};%
+	\node [fit={(#2_NW)(#2_SE)},inner sep=0mm,draw=none] (#2) {};%
+	\renewcommand{\lastmodule}{#2};%
 }
 
 % Draws a module with a vertical color gradient
@@ -287,10 +300,13 @@
 		\edef\numcpoffset{\pgfmathresult}%
 		\pgfmathparse{int(int(((int(ceil(#2))+2)/3))-1+\numcpoffset)}%
 		\edef\numcpboxes{\pgfmathresult}%
+		\node[fit={($(#1_\numcpoffset_NW.center)+(2\modulepadding,-2\modulepadding)$)($(#1_\numcpboxes_SE.center)+(-2\modulepadding,2\modulepadding)$)},
+		      inner sep=0mm,draw=none] (#1_integrated) {};%
+		\renewcommand{\lastintegrated}{#1_integrated};%
 		\draw[line width=1pt,dashed,black]%
-		($(#1_\numcpoffset_NW.center)+(2\modulepadding,-2\modulepadding)$)%
+		(#1_integrated.north west)%
 		rectangle%
-		($(#1_\numcpboxes_SE.center)+(-2\modulepadding,2\modulepadding)$)%
+		(#1_integrated.south east)%
 		node[pos=.5,black] {\@modulelabel{#4}{#2}};%
 	\else%
 		\PackageError{mypackage}{Not inside tetris environment}{This macro must be called from a tetris environment}%
