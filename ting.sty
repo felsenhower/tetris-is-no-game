@@ -253,15 +253,11 @@
 % #6: Color of the text
 % #7: Text (name of the module)
 \newcommand{\@module}[7]{%
-	\@creditboxes{#1_NE}{#2}{#3}%
+	\@creditboxes{#1.north east}{#2}{#3}%
 	\pgfmathparse{int(int(((int(ceil(#3))+2)/3))-1)}%
 	\edef\numcpboxes{\pgfmathresult}%
 	\@modulefilling{#2_0}{#2_\numcpboxes}{#4}{#5}{#6}{#7}{#3}%
-	\node [at=(#2_0.north west)] (#2_NW) {};%
-	\node [at=(#2_0.south west)] (#2_SW) {};%
-	\node [at=(#2_\numcpboxes.north east)] (#2_NE) {};%
-	\node [at=(#2_\numcpboxes.south east)] (#2_SE) {};%
-	\node [fit={(#2_NW)(#2_SE)},inner sep=0mm,draw=none] (#2) {};%
+	\node [fit={(#2_0.north west)(#2_\numcpboxes.south east)},inner sep=0mm,draw=none] (#2) {};%
 	\renewcommand{\lastmodule}{#2};%
 }
 
@@ -275,15 +271,11 @@
 % #7: Color of the text
 % #8: Text (name of the module)
 \newcommand{\@moduleshade}[8]{%
-	\@creditboxes{#1_NE}{#2}{#3}%
+	\@creditboxes{#1.north east}{#2}{#3}%
 	\pgfmathparse{int(int(((int(ceil(#3))+2)/3))-1)}%
 	\edef\numcpboxes{\pgfmathresult}%
 	\@modulefillingshade{#2_0}{#2_\numcpboxes}{#4}{#5}{#6}{#7}{#8}{#3}%
-	\node [at=(#2_0.north west)] (#2_NW) {};%
-	\node [at=(#2_0.south west)] (#2_SW) {};%
-	\node [at=(#2_\numcpboxes.north east)] (#2_NE) {};%
-	\node [at=(#2_\numcpboxes.south east)] (#2_SE) {};%
-	\node [fit={(#2_NW)(#2_SE)},inner sep=0mm,draw=none] (#2) {};%
+	\node [fit={(#2_0.north west)(#2_\numcpboxes.south east)},inner sep=0mm,draw=none] (#2) {};%
 	\renewcommand{\lastmodule}{#2};%
 }
 
