@@ -1,7 +1,10 @@
 # tetris-is-no-game
+
 * **T**etris **i**s **n**ot a **g**ame.
 * Tetris is serious matter.
-* If used correctly, the ting might go like
+
+## Example
+
 ![tetris](https://github.com/felsenhower/tetris-is-no-game/raw/master/samples/sample.png)
 
 ```latex
@@ -110,11 +113,3 @@
 
 \end{document}
 ```
-* If used incorrectly, the ting might also go
-  * “Skrrrrrrrrrrrahh”
-  * “Pap, pap, ka-ka-ka”
-  * “Skidiki-pap-pap”
-  * and a “Pu-pu-pudrrrr-boom”
-  * “Skya”
-  * “Du-du-ku-ku-dun-dun”
-  * “Poom, poom”, you dun know
