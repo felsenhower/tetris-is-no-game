@@ -43,7 +43,7 @@
 \newlength{\tetrissep}
 
 % Height of the gray boxes in the background of a module and width of a module with 3 CP
-\setlength{\boxwidth}{20mm}
+\setlength{\boxwidth}{21.5mm}
 
 % Padding of the filling of a module in front of the gray boxes
 \setlength{\modulepadding}{1mm}
@@ -55,7 +55,7 @@
 \setlength{\semsep}{2mm}
 
 % Distance between two tetrises
-\setlength{\tetrissep}{10mm}
+\setlength{\tetrissep}{12mm}
 
 % Distance between the entries of the legend
 \setlength{\legendsep}{5mm}
@@ -75,6 +75,15 @@
 \newcounter{modulectoffset}
 \setcounter{modulectoffset}{0}
 
+
+\tikzset{
+	tetrisnode/.style={
+		inner sep=0mm,
+		outer sep=0mm
+	}
+}
+
+
 % Saved nodes of the last credit box, module filling, etc...
 \newcommand{\lastcreditbox}{\relax}
 \newcommand{\lastmodulefilling}{\relax}
@@ -91,7 +100,7 @@
 	\stepcounter{legendct}%
 	\ifnum\value{legendct}=1%
 		\node[draw,black,fill=#1,label={[label distance=1mm]0:\sffamily#2}]%
-		      at ($(sem_\the\value{semesterct}_SW)!1/2!(sem_\the\value{semesterct}_SE)+(0,-1\tetrissep)$)%
+		      at ($(sem_\the\value{semesterct}.south west)!1/2!(sem_\the\value{semesterct}.south east)+(0,-1\tetrissep)$)%
 		      (legend_\the\value{legendct}) {};%
 	\else%
 		\node[draw,black,fill=#1,label={[label distance=1mm]0:\sffamily#2}]%
@@ -108,7 +117,7 @@
 \newenvironment{tetris}[1][]{%
 	\begingroup%
 	\renewcommand{\insidetetris}{\true}%
-    \ifx&#1&%
+	\ifx&#1&%
 		\begin{scope}%
 	\else%
 		\begin{scope}[local bounding box=#1]%
@@ -116,8 +125,9 @@
 	\stepcounter{tetrisct}%
 	\ifnum\value{tetrisct}>1%
 		\stepcounter{semesterct}%
-		\node [below=\tetrissep of sem_\the\numexpr\value{semesterct}-1\relax_SW]%
-		      (sem_\the\value{semesterct}_SW) {};%
+		\node [fit={($(sem_\the\numexpr\value{semesterct}-1\relax.south west)+(0mm,-\tetrissep)$)%
+                            ($(sem_\the\numexpr\value{semesterct}-1\relax.south east)+(0mm,-\tetrissep)$)},tetrisnode]%
+                       (sem_\the\value{semesterct}) {};%
 	\fi%
 }{%
 	\end{scope}%
@@ -133,17 +143,9 @@
 % #3: Width of the box in CP (for 1 and 2 a partition of a square is drawn).
 \newcommand{\@creditbox}[3]{%
 	\ifx\insidetetris\insidetetristrue\relax%
-		\node [at=(#1.center)] (#2_NW) {};%
-		\node [below right=\boxwidth and #3/3*\boxwidth of #2_NW.center] (#2_SE) {};%
-		\node [at=(#2_NW.center|-#2_SE.center)] (#2_SW) {};%
-		\node [at=(#2_SE.center|-#2_NW.center)] (#2_NE) {};%
-		\node [at=($(#2_NW.center)!1/2!(#2_SW.center)$)] (#2_W) {};%
-		\node [fit={(#2_NW)(#2_SE)},inner sep=0mm,draw=none] (#2) {};%
+		\node [fit={(#1.north east)($(#1.south east)+(#3/3*\boxwidth,0mm)$)},
+		       inner sep=0mm,draw=lightgray,line width=1.5pt,tetrisnode] (#2)  {};%
 		\renewcommand{\lastcreditbox}{#2};%
-		\draw[line width=1.5pt,lightgray] (#2_NW.center) -- (#2_NE.center)%
-	                        -- (#2_SE.center)%
-	                        -- (#2_SW.center)%
-	                        -- (#2_NW.center) --cycle;%
 	\else%
 		\PackageError{mypackage}{Not inside tetris environment}{This macro must be called from a tetris environment}%
 	\fi%
@@ -164,14 +166,14 @@
 		\edef\almostnumcpboxes{\pgfmathresult}%
 		\ifnum\integercp > 6%
 			\foreach \i in {1,...,\almostnumcpboxes} {%
-				\@creditbox{#2_\the\numexpr\i-1\relax_NE}%
+				\@creditbox{#2_\the\numexpr\i-1\relax}%
 				           {#2_\the\numexpr\i\relax}%
 				           {3};%
 			}%
 		\fi%
 		\pgfmathparse{#3-((int((#3+2.5)/3)-1)*3)}%
 		\edef\lastboxwidth{\pgfmathresult}%
-		\@creditbox{#2_\almostnumcpboxes_NE}%
+		\@creditbox{#2_\almostnumcpboxes}%
 		           {#2_\numcpboxes}%
 		           {\lastboxwidth};%
 	\else%
@@ -213,8 +215,8 @@
 % #7: Number of CP
 \newcommand{\@modulefilling}[7]{%
 	\ifx\insidetetris\insidetetristrue\relax%
-		\node[fit={($(#1_NW.center)+(\modulepadding,-\modulepadding)$)($(#2_SE.center)+(-\modulepadding,\modulepadding)$)},%
-		      inner sep=0mm,draw=none] (#1_filling) {};%
+		\node[fit={($(#1.north west)+(\modulepadding,-\modulepadding)$)($(#2.south east)+(-\modulepadding,\modulepadding)$)},%
+		      inner sep=0mm,draw=none,tetrisnode] (#1_filling) {};%
 		\renewcommand{\lastmodulefilling}{#1_filling};%
 		\draw[#4,fill=#3,fill opacity=0.96,line width=1pt]%
 		      (#1_filling.north west)%
@@ -239,9 +241,9 @@
 \newcommand{\@modulefillingshade}[8]{%
 	\ifx\insidetetris\insidetetristrue\relax%
 		\shadedraw[top color=#3,bottom color=#4, draw=#5, line width=1pt]%
-		($(#1_NW.center)+(\modulepadding,-\modulepadding)$)%
+		($(#1.north west)+(\modulepadding,-\modulepadding)$)%
 		rectangle%
-		($(#2_SE.center)+(-\modulepadding,\modulepadding)$)%
+		($(#2.south east)+(-\modulepadding,\modulepadding)$)%
 		node[pos=.5,#6] {\@modulelabel{#7}{#8}};%
 	\else%
 		\PackageError{mypackage}{Not inside tetris environment}{This macro must be called from a tetris environment}%
@@ -257,15 +259,11 @@
 % #6: Color of the text
 % #7: Text (name of the module)
 \newcommand{\@module}[7]{%
-	\@creditboxes{#1_NE}{#2}{#3}%
+	\@creditboxes{#1}{#2}{#3}%
 	\pgfmathparse{int(int(((int(ceil(#3))+2)/3))-1)}%
 	\edef\numcpboxes{\pgfmathresult}%
 	\@modulefilling{#2_0}{#2_\numcpboxes}{#4}{#5}{#6}{#7}{#3}%
-	\node [at=(#2_0_NW)] (#2_NW) {};%
-	\node [at=(#2_0_SW)] (#2_SW) {};%
-	\node [at=(#2_\numcpboxes_NE)] (#2_NE) {};%
-	\node [at=(#2_\numcpboxes_SE)] (#2_SE) {};%
-	\node [fit={(#2_NW)(#2_SE)},inner sep=0mm,draw=none] (#2) {};%
+	\node [fit={(#2_0.north west)(#2_\numcpboxes.south east)},inner sep=0mm,draw=none,tetrisnode] (#2) {};%
 	\renewcommand{\lastmodule}{#2};%
 }
 
@@ -279,14 +277,12 @@
 % #7: Color of the text
 % #8: Text (name of the module)
 \newcommand{\@moduleshade}[8]{%
-	\@creditboxes{#1_NE}{#2}{#3}%
+	\@creditboxes{#1}{#2}{#3}%
 	\pgfmathparse{int(int(((int(ceil(#3))+2)/3))-1)}%
 	\edef\numcpboxes{\pgfmathresult}%
 	\@modulefillingshade{#2_0}{#2_\numcpboxes}{#4}{#5}{#6}{#7}{#8}{#3}%
-	\node [at=(#2_0_NW)] (#2_NW) {};%
-	\node [at=(#2_0_SW)] (#2_SW) {};%
-	\node [at=(#2_\numcpboxes_NE)] (#2_NE) {};%
-	\node [at=(#2_\numcpboxes_SE)] (#2_SE) {};%
+	\node [fit={(#2_0.north west)(#2_\numcpboxes.south east)},inner sep=0mm,draw=none,tetrisnode] (#2) {};%
+	\renewcommand{\lastmodule}{#2};%
 }
 
 % Draws an integrated module part (like a seminar)
@@ -300,8 +296,8 @@
 		\edef\numcpoffset{\pgfmathresult}%
 		\pgfmathparse{int(int(((int(ceil(#2))+2)/3))-1+\numcpoffset)}%
 		\edef\numcpboxes{\pgfmathresult}%
-		\node[fit={($(#1_\numcpoffset_NW.center)+(2\modulepadding,-2\modulepadding)$)($(#1_\numcpboxes_SE.center)+(-2\modulepadding,2\modulepadding)$)},
-		      inner sep=0mm,draw=none] (#1_integrated) {};%
+		\node[fit={($(#1_\numcpoffset.north west)+(2\modulepadding,-2\modulepadding)$)($(#1_\numcpboxes.south east)+(-2\modulepadding,2\modulepadding)$)},
+		      inner sep=0mm,draw=none,tetrisnode] (#1_integrated) {};%
 		\renewcommand{\lastintegrated}{#1_integrated};%
 		\draw[line width=1pt,dashed,black]%
 		(#1_integrated.north west)%
@@ -326,15 +322,12 @@
 % #3: Text of the semester
 \newcommand{\@semester}[3]{%
 	\ifx\insidetetris\insidetetristrue\relax%
-	    \ifx&#1&%
-			\node (#2_NW) {};%
+		\ifx&#1&%
+			\node [fit={(0,0)($(0,0)+(4/3*\boxwidth,-\boxwidth)$)},tetrisnode] (#2) {};
 		\else%
-			\node at ($(#1_SW)+(0,-\semsep)$) (#2_NW) {};%
+			\node [fit={($(#1.south west)+(0,-\semsep)$)($(#1.south east)+(0,-\semsep-\boxwidth)$)},tetrisnode] (#2) {};
 		\fi%
-		\node [below right=\boxwidth and 4/3*\boxwidth of #2_NW.center] (#2_SE) {};%
-		\node [at=(#2_NW.center|-#2_SE.center)] (#2_SW) {};%
-		\node [at=(#2_SE.center|-#2_NW.center)] (#2_NE) {};%
-		\node [left=\semlabelsep of $(#2_NE.center)!1/2!(#2_SE.center)$, anchor=east]  {\@semesterlabel{#3}};%
+		\node [left=\semlabelsep of #2.east, anchor=east,tetrisnode]  {\@semesterlabel{#3}};%
 	\else%
 		\PackageError{mypackage}{Not inside tetris environment}{This macro must be called from a tetris environment}%
 	\fi%
@@ -346,11 +339,11 @@
 	\setcounter{modulect}{0}%
 	\stepcounter{semesterct}%
 	\ifnum\value{semesterct}=1%
-		\@semester{}{sem_\the\value{semesterct}}{#1}%
+		\@semester{}{sem_1}{#1}%
 	\else%
 		\@semester{sem_\the\numexpr\value{semesterct}-1\relax}{sem_\the\value{semesterct}}{#1}%
 	\fi%
-	\node [at=(sem_\the\value{semesterct}_NE)] (sem_\the\value{semesterct}_mod_0_NE) {};%
+	\node [fit={(sem_\the\value{semesterct}.north east)(sem_\the\value{semesterct}.south east)},tetrisnode] (sem_\the\value{semesterct}_mod_0) {};%
 }
 
 % Draws a new module in the current semester started with \drawsemester
